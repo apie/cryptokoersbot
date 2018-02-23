@@ -1,26 +1,17 @@
 #!/usr/bin/env python3
 import requests
 import datetime
-import os
-from pydblite import Base
+from db import open_db
 
 api_url_markets = 'https://api.litebit.eu/markets'
 
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-DB_FILE = os.path.join(SCRIPT_DIR, 'market_data.db')
-
 def save_market_data():
-  db = Base(DB_FILE)
-  db.create('abbr', 'name', 'available', 'volume', 'buy', 'sell', 'date',
-            mode="open")
-  if not db.exists():
-    raise Exception('Database error')
-
   resp = requests.get(api_url_markets, timeout=3)
   if not resp.json()['success']:
     raise Exception('API returned an error')
-
   result = resp.json()['result']
+
+  db = open_db()
   for coin in result.keys():
       db.insert(
         abbr=result[coin]['abbr'],
