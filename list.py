@@ -9,7 +9,7 @@ def list_latest(coin):
   db = open_db()
   change = None
   sell_old = None
-  for i, r in enumerate(sorted(db(abbr=coin.lower()), key=sort_date, reverse=False)[-11:]):
+  for i, r in enumerate(sorted(db._abbr[coin.lower()], key=sort_date, reverse=False)[-11:]):
     sell = r.get('sell')
     change = ((sell/sell_old)-1)*100 if sell_old else None 
     line = ''

@@ -11,5 +11,6 @@ def open_db():
             mode="open")
   if not db.exists():
     raise Exception('Database error')
+  db.create_index('abbr')
   return db
 
