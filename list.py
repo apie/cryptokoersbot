@@ -23,8 +23,16 @@ def list_latest(coin):
       print(line)
     sell_old = sell
 
+def get_markets():
+  db = open_db()
+  return " ".join(sorted(db._abbr.keys()))
+
 if __name__ == '__main__':
-  coins = sys.argv[1:]
-  for i, coin in enumerate(coins):
-    list_latest(coin)
-    print() if i < len(coins)-1 else None
+  if len(sys.argv) == 1:
+    print('Geef als argument een of meerdere markten/coins op.')
+    print('Beschikbaar: %s' % get_markets())
+  else:
+    coins = sys.argv[1:]
+    for i, coin in enumerate(coins):
+      list_latest(coin)
+      print() if i < len(coins)-1 else None
