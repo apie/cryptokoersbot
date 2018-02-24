@@ -14,8 +14,8 @@ def list_latest(coin):
     change = ((sell/sell_old)-1)*100 if sell_old else None 
     line = ''
     line += r.get('date').strftime('%Y-%m-%d %H:%M')
-    line += ' %9.2f' % r.get('sell')
-    line += '%7s' % (' %s%0.2f' % ('+' if change >= 0 else '', change) if change is not None else '')
+    line += ' € %9.2f' % r.get('sell')
+    line += '%7s' % (' %s%0.2f%%' % ('+' if change >= 0 else '', change) if change is not None else '')
     line += ' %s' % ('▲' if change >= 0 else '▼') if change is not None else ''
     if i == 0:
       print('%s (%s)' % (r.get('name'), r.get('abbr').upper()))
