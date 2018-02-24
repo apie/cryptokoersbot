@@ -7,7 +7,15 @@ api_url_markets = 'https://api.litebit.eu/markets'
 
 def save_market_data():
   resp = requests.get(api_url_markets, timeout=3)
-  if not resp.json()['success']:
+  if not resp.status_code == 200:
+    raise Exception('Could not read API (%s)' % resp.status_code)
+  if not 'application/json' in resp.headers.get('Content-Type'):
+    raise Exception('Could not read API')
+  try:
+    resp.json()
+  except:
+    raise Exception('Could not decode API json')
+  if not resp.json().get('success'):
     raise Exception('API returned an error')
   result = resp.json()['result']
 
