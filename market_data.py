@@ -5,7 +5,7 @@ from db import open_db
 
 api_url_markets = 'https://api.litebit.eu/markets'
 
-def save_market_data():
+def fetch_market_data():
   resp = requests.get(api_url_markets, timeout=3)
   if not resp.status_code == 200:
     raise Exception('Could not read API (%s)' % resp.status_code)
@@ -17,8 +17,9 @@ def save_market_data():
     raise Exception('Could not decode API json')
   if not resp.json().get('success'):
     raise Exception('API returned an error')
-  result = resp.json()['result']
+  return resp.json()['result']
 
+def save_market_data(result):
   db = open_db()
   for coin in result.keys():
       db.insert(
@@ -31,6 +32,19 @@ def save_market_data():
         date=datetime.datetime.now())
       db.commit()
       
+def fetch_and_save_market_data():
+    md = None
+    for i in enumerate(range(0,3)):
+        try:
+            md = fetch_market_data()
+            break
+        except Exception as e:
+            print(e)
+        print('trying again')
+
+    if md:
+        save_market_data(md)
+
 if __name__ == '__main__':
-    save_market_data()
+    fetch_and_save_market_data()
 
