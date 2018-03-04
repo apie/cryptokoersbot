@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import requests
 import datetime
+import time
 from db import open_db
 
 api_url_markets = 'https://api.litebit.eu/markets'
@@ -39,11 +40,13 @@ def fetch_and_save_market_data():
             md = fetch_market_data()
             break
         except Exception as e:
-            print(e)
-        print('trying again')
+            pass
+        time.sleep(2)
 
     if md:
         save_market_data(md)
+    else:
+        print('Unable to get data')
 
 if __name__ == '__main__':
     fetch_and_save_market_data()
