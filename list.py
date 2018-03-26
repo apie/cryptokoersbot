@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 import sys
 import datetime
+from emoji import emojize
 from db import open_db
+
+PLUS_ICON = emojize(':white_heavy_check_mark:')
+MINUS_ICON = emojize(':red_triangle_pointed_down:')
 
 def sort_date(elem):
   return elem.get('date')
@@ -47,7 +51,7 @@ def list_changes(coin):
     change = ((current_price/price)-1)*100
     line += '%3s' % list(moment.keys())[0]
     line += ' %5.2f%%' % abs(change)
-    line += '%s ' % ('▲' if change >= 0 else '▼') if change is not None else ''
+    line += '%s ' % (PLUS_ICON if change >= 0 else MINUS_ICON) if change is not None else ''
     if (i+1)%2 == 0:
       print(line)
       line = ''
@@ -63,9 +67,9 @@ def list_latest(coin):
     change = ((sell/sell_old)-1)*100 if sell_old else None 
     line = ''
     line += r.get('date').strftime('%m-%d %H:%M')
-    line += ' €%8.2f' % r.get('sell')
+    line += ' €%5.0f' % r.get('sell')
     line += ' %0.2f%%' % abs(change) if change is not None else ''
-    line += '%s' % ('▲' if change >= 0 else '▼') if change is not None else ''
+    line += '%s' % (PLUS_ICON if change >= 0 else MINUS_ICON) if change is not None else ''
     if i == 0:
       print('%s (%s)' % (r.get('name'), r.get('abbr').upper()))
     else:
@@ -84,6 +88,7 @@ if __name__ == '__main__':
     coins = sys.argv[1:]
     for i, coin in enumerate(coins):
       list_latest(coin)
+      print()
       list_changes(coin)
       print() if i < len(coins)-1 else None
 
