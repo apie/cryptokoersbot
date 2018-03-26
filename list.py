@@ -40,15 +40,19 @@ def list_changes(coin):
 
   line = ''
   previous_moment = now
-  for moment in historic_moments:
+  for i, moment in enumerate(historic_moments):
     min_date = previous_moment
     max_date = list(moment.values())[0]
     price = get_price_between_dates(coin.lower(), min_date, max_date)
     change = ((current_price/price)-1)*100
     line += '%3s' % list(moment.keys())[0]
-    line += '%7s' % (' %s%5.2f%%' % ('+' if change >= 0 else '-', abs(change)))
-    line += ' %s ' % ('▲' if change >= 0 else '▼') if change is not None else ''
-  print(line)
+    line += ' %5.2f%%' % abs(change)
+    line += '%s ' % ('▲' if change >= 0 else '▼') if change is not None else ''
+    if (i+1)%2 == 0:
+      print(line)
+      line = ''
+  if line != '':
+      print(line)
 
 def list_latest(coin):
   db = open_db()
@@ -58,10 +62,10 @@ def list_latest(coin):
     sell = r.get('sell')
     change = ((sell/sell_old)-1)*100 if sell_old else None 
     line = ''
-    line += r.get('date').strftime('%Y-%m-%d %H:%M')
-    line += ' € %9.2f' % r.get('sell')
-    line += '%7s' % (' %s%5.2f%%' % ('+' if change >= 0 else '-', abs(change)) if change is not None else '')
-    line += ' %s' % ('▲' if change >= 0 else '▼') if change is not None else ''
+    line += r.get('date').strftime('%m-%d %H:%M')
+    line += ' €%8.2f' % r.get('sell')
+    line += ' %0.2f%%' % abs(change) if change is not None else ''
+    line += '%s' % ('▲' if change >= 0 else '▼') if change is not None else ''
     if i == 0:
       print('%s (%s)' % (r.get('name'), r.get('abbr').upper()))
     else:
