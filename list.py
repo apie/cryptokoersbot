@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import math
 import sys
 import datetime
 from emoji import emojize
@@ -67,7 +68,14 @@ def list_latest(coin):
     change = ((sell/sell_old)-1)*100 if sell_old else None 
     line = ''
     line += r.get('date').strftime('%m-%d %H:%M')
-    line += ' €%5.0f' % r.get('sell')
+    digits = math.floor(math.log10(r.get('sell')))
+    assert digits <= 4, "Numbers too large to print"
+    width = 5
+    if digits >= 0 and digits < 4:
+      decimals = width - 3 - digits
+    else:
+      decimals = -min(0, digits)
+    line += ' €{0:{width}.{decimals}f}'.format(r.get('sell'), width=width, decimals=0 if not decimals else decimals+1)
     line += ' %0.2f%%' % abs(change) if change is not None else ''
     line += '%s' % (PLUS_ICON if change >= 0 else MINUS_ICON) if change is not None else ''
     if i == 0:
