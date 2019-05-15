@@ -13,7 +13,9 @@ def get_change(coin):
       reverse=True)[:2]:
     vals.append(rec.get('sell'))
   assert len(vals) == 2
-  return round(((vals[0]/vals[1])-1)*100, 2)
+  latest = vals[0]
+  previous = vals[1]
+  return latest, round(((latest/previous)-1)*100, 2)
 
 if __name__ == '__main__':
   if len(sys.argv) == 2:
@@ -22,10 +24,10 @@ if __name__ == '__main__':
   else:
     coin = sys.argv[1]
     change_check = round(float(sys.argv[2]), 2)
-    change = get_change(coin)
+    latest, change = get_change(coin)
     if abs(change) >= change_check:
       print('Munt:', coin.upper())
+      print('Koers:', str(latest)[:6])
       print('Verschil:', change)
-      print('Grens:', change_check)
       sys.exit(1)
 
